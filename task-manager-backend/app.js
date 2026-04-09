@@ -66,6 +66,70 @@ app.post("/tasks", (req, res) => {
   }
 });
 
+// UPDATE task status (toggle completed)
+app.patch("/tasks/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const task = tasks.find((t) => t.id === id);
+
+    // If task not found
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found"
+      });
+    }
+
+    // Toggle completed status
+    task.completed = !task.completed;
+
+    res.status(200).json({
+      success: true,
+      message: "Task updated successfully",
+      data: task
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update task"
+    });
+  }
+});
+
+// DELETE a task
+app.delete("/tasks/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const taskIndex = tasks.findIndex((t) => t.id === id);
+
+    // If task not found
+    if (taskIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found"
+      });
+    }
+
+    // Remove task
+    const deletedTask = tasks.splice(taskIndex, 1);
+
+    res.status(200).json({
+      success: true,
+      message: "Task deleted successfully",
+      data: deletedTask[0]
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete task"
+    });
+  }
+});
+
 // Server
 const PORT = 5000;
 
